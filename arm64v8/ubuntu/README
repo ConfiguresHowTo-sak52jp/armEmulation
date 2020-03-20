@@ -1,0 +1,26 @@
+Containerの中でgdbでデバッグする方法
+
+1) ビルド
+(e.g.) gcc -static -o hoge -O0 -g hoge.c
+ ⇛ -staticがポイント！
+
+2) ターゲットはqemu-aarch64-staticでgdbからのremote接続待ちにしておく
+ (e.g.) qemu-aarch64-static -g 1234 hoge &
+
+3) gdbを接続する
+例：mainでブレークする
+# gdb hoge
+(gdb) b main
+(gdb) target remote :1234
+......
+
+emacsから制御する時は、
+a) M-x gdb
+  --> このままだと、ステップ実行したときに、一々コードが表示されるので、
+  それがうざい場合は、--annotate=1 を付加すれば、少しは静かになる。
+
+b) 後はgdbのバッファーで上と同じ操作をすれば良い
+
+<注：敗者の強がり>
+ターゲットがprintfで吐き出す出力が、何故か(gdb)プロンプトと同じ行に表
+示されてしまうのが少し悔しいが、とりあえず我慢した。
